@@ -3,7 +3,7 @@ const config = require("./configuration.json");
 //Modules
 const express = require("express");
 
-const db = require("./Models");
+const db = require('./Database');
 //Routes
 const register = require("./Routers/register");
 
@@ -23,15 +23,15 @@ app.use((err,req,res,next)=>{
 
 //Listen
 PORT = process.env.PORT || parseInt(config.PORT);
-if (db.isDbConnected()) {
-    /*
-    db.sequelize.sync().then(()=>{
-        console.log("Sequelized")
-    }).catch(error => {
-        console.log("DB Sync Error",error)
-    })
-    */
-    app.listen(PORT, () => {
-        console.log(`Server started at port ${PORT}`);
-    });
-}
+    
+db.connect((err) => {
+    if(err){
+        console.log("Couldn't Connect to the Database!!");
+        console.log("DB Error: ",err);
+    }
+    else{
+        app.listen(PORT, () => {
+            console.log(`Server started at port ${PORT}`);
+        });
+    }
+});

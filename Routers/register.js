@@ -1,5 +1,4 @@
 const express = require("express");
-const GP_Customer = require('../Models/GP_Customer');
 
 const router = express.Router();
 

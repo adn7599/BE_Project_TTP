@@ -5,6 +5,5 @@
     "DB_PORT": "3306",
     "DB_USER": "TTP_User",
     "DB_PASS": "123456",
-    "DB_NAME": "TTP",
-    "DB_DIALECT": "mysql"
+    "DB_NAME": "TTP"
 }
