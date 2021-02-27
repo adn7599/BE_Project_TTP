@@ -24,7 +24,7 @@ CREATE TABLE GP_Supplier(
 );
 
 CREATE TABLE GP_Distributor(
-	Reg_no CHAR(12) PRIMARY KEY CHECK(Reg_no LIKE 'DP%'),
+	Reg_no CHAR(12) PRIMARY KEY CHECK(Reg_no LIKE 'DA%'),
     First_Name VARCHAR(20) NOT NULL,
     Middle_Name VARCHAR(20) NOT NULL,
     Last_Name VARCHAR(20) NOT NULL,
