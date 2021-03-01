@@ -12,6 +12,7 @@
   "license": "ISC",
   "dependencies": {
     "express": "^4.17.1",
+    "ibejs": "^1.1.0",
     "json-field-validator": "^0.0.2",
     "jsonwebtoken": "^8.5.1",
     "mysql": "^2.18.1",

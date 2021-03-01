@@ -79,7 +79,7 @@ CREATE TABLE Customer(
     Ration_no CHAR(10) PRIMARY KEY,
     Registration_DateTime DATETIME NOT NULL,
     Password CHAR(64) NOT NULL,	#FOR SHA_256 hash
-    DB_Key BINARY(16) NOT NULL, #FOR AES_128 key
+    DB_Key CHAR(32) NOT NULL, #FOR AES_128 key
     FOREIGN KEY(Ration_no) REFERENCES GP_Customer(Ration_no)
 );
 
@@ -87,15 +87,15 @@ CREATE TABLE Supplier(
     Reg_no CHAR(12) PRIMARY KEY,
     Registration_DateTime DATETIME NOT NULL,
     Password CHAR(64) NOT NULL,	#FOR SHA_256 hash
-    DB_Key BINARY(16) NOT NULL, #FOR AES_128 key
+    DB_Key CHAR(32) NOT NULL, #FOR AES_128 key
     FOREIGN KEY(Reg_no) REFERENCES GP_Supplier(Reg_no)
 );
 			
 CREATE TABLE Distributor(			
     Reg_no CHAR(12) PRIMARY KEY,
     Registration_DateTime DATETIME NOT NULL,
-    Password CHAR(64) NOT NULL,	#FOR SHA_256 hash,
-    DB_Key BINARY(16) NOT NULL, #FOR AES_128 key,
+    Password CHAR(64) NOT NULL,	#FOR SHA_256 hash in hex
+    DB_Key CHAR(32) NOT NULL, #FOR AES_128 key in hex
     FOREIGN KEY(Reg_no) REFERENCES GP_Distributor(Reg_no)
 );
 

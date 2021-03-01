@@ -178,11 +178,9 @@ router.post("/verifyOTP", (req, res, next) => {
       }
     });
   } else {
-    res
-      .status(400)
-      .json({
-        error: "Invalid parameters sent! (role, reg_id , otp, token required)",
-      });
+    res.status(400).json({
+      error: "Invalid parameters sent! (role, reg_id , otp, token required)",
+    });
   }
 });
 
@@ -239,18 +237,31 @@ router.post("/accountRegister", (req, res, next) => {
                 .update(password)
                 .digest("hex");
 
+              let now = new Date();
+              let aesKey = crypto.randomBytes(16).toString("hex"); //128 bits => 16 bytes
+
               let query = "INSERT INTO ?? VALUES(?,?,?,?)";
-              let fquery = conn.format(query,[tableName.substring(3),])
+              let fquery = conn.format(query, [
+                tableName.substring(3),
+                reg_id,
+                now,
+                hashedPass,
+                aesKey,
+              ]);
 
+              conn.query(fquery, (err, result, field) => {
+                if (err) {
+                  next(err);
+                } else {
+                  console.log(result);
+                  res.json({ status: "User Registered!" });
+                }
+              });
             } else {
-              res
-                .status(400)
-                .json({
-                  error: "Password length should be between 8 and 15, included",
-                });
+              res.status(400).json({
+                error: "Password length should be between 8 and 15, included",
+              });
             }
-
-            res.json({ status: "OTP Verified!", token: regToken });
           } else {
             res.status(400);
             res.json({ error: "Invalid Token, Verify OTP Again" });
@@ -259,15 +270,88 @@ router.post("/accountRegister", (req, res, next) => {
       }
     });
   } else {
-    res
-      .status(400)
-      .json({
-        error:
-          "Invalid parameters sent! (role, reg_id, password, token required)",
-      });
+    res.status(400).json({
+      error:
+        "Invalid parameters sent! (role, reg_id, password, token required)",
+    });
   }
 });
 
-router.post("/login", (req, res) => {});
+router.post("/login", (req, res, next) => {
+  if (req.body.role && req.body.reg_id && req.body.password) {
+    let role = req.body.role;
+    let reg_id = req.body.reg_id;
+    let password = req.body.password;
+
+    let tableName;
+    let colName = "Reg_no";
+
+    switch (role) {
+      case "customer":
+        tableName = "Customer";
+        colName = "Ration_no";
+        break;
+      case "SP":
+        tableName = "Supplier";
+        break;
+      case "DA":
+        tableName = "Distributor";
+        break;
+      default:
+        res
+          .status(400)
+          .json({ error: "Invalid Role Sent (valid roles: customer, SP, DA)" });
+        break;
+    }
+
+    let query = "SELECT * FROM ?? WHERE ?? = ?";
+    let fquery = conn.format(query, [tableName, colName, reg_id]);
+
+    conn.query(fquery, (err, result, fields) => {
+      if (err) {
+        next(err);
+      } else {
+        if (result.length == 0) {
+          res.status(400);
+          res.json({ error: "Invalid User!" });
+        } else {
+          let usr = result[0];
+
+          let hashedPass = crypto
+            .createHash("SHA256")
+            .update(password)
+            .digest("hex");
+
+          if (usr.Password === hashedPass) {
+            auth
+              .getToken(role, reg_id, res, next)
+              .then((token) => {
+
+                res.json({
+                  "status" : "User Logged In!",
+                  "token": token,
+                  "privateKey":"",
+                  "RelayDBKey":usr.DB_Key, 
+                })       
+              })
+              .catch((err) => {
+                next(err);
+              });
+          } else {
+            res.status(400).json({ error: "Invalid Password" });
+          }
+        }
+      }
+    });
+  } else {
+    res.status(400).json({
+      error: "Invalid parameters sent! (role, reg_id, password required)",
+    });
+  }
+});
+
+router.post("/check", auth.verifyUser, (req, res) => {
+  res.json({ user: req.user });
+});
 
 module.exports = router;
