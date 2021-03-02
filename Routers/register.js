@@ -178,11 +178,9 @@ router.post("/verifyOTP", (req, res, next) => {
       }
     });
   } else {
-    res
-      .status(400)
-      .json({
-        error: "Invalid parameters sent! (role, reg_id , otp, token required)",
-      });
+    res.status(400).json({
+      error: "Invalid parameters sent! (role, reg_id , otp, token required)",
+    });
   }
 });
 
@@ -240,14 +238,11 @@ router.post("/accountRegister", (req, res, next) => {
                 .digest("hex");
 
               let query = "INSERT INTO ?? VALUES(?,?,?,?)";
-              let fquery = conn.format(query,[tableName.substring(3),])
-
+              let fquery = conn.format(query, [tableName.substring(3)]);
             } else {
-              res
-                .status(400)
-                .json({
-                  error: "Password length should be between 8 and 15, included",
-                });
+              res.status(400).json({
+                error: "Password length should be between 8 and 15, included",
+              });
             }
 
             res.json({ status: "OTP Verified!", token: regToken });
@@ -259,12 +254,10 @@ router.post("/accountRegister", (req, res, next) => {
       }
     });
   } else {
-    res
-      .status(400)
-      .json({
-        error:
-          "Invalid parameters sent! (role, reg_id, password, token required)",
-      });
+    res.status(400).json({
+      error:
+        "Invalid parameters sent! (role, reg_id, password, token required)",
+    });
   }
 });
 
