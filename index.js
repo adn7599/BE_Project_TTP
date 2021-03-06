@@ -6,16 +6,14 @@ const express = require("express");
 const db = require("./Database");
 //Routes
 const register = require("./Routers/register");
-const transaction = require("./Routers/transaction");
 
-app = express();
+app = express()
 
 //Middlewares
 app.use(express.json());
 
 //Setting up routes
 app.use("/register", register);
-app.use("/transaction", transaction);
 
 //Error Handler
 app.use((err, req, res, next) => {
