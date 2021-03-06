@@ -1,1 +1,0 @@
-const ibe = require('ibejs')
