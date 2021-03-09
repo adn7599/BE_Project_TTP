@@ -49,9 +49,7 @@ function verifyUser(req, res, next) {
             res.status(403);
             res.json({ error: "Invalid token" });
           } else {
-            console.log("Decoded", decoded);
             req.user = decoded;
-            console.log("Inside Decoded");
             next();
           }
         }

@@ -5,7 +5,8 @@ const express = require("express");
 
 const db = require("./Database");
 //Routes
-const register = require("./Routers/register");
+const user = require("./Routers/User");
+const relay = require('./Routers/relay');
 
 app = express()
 
@@ -13,7 +14,8 @@ app = express()
 app.use(express.json());
 
 //Setting up routes
-app.use("/register", register);
+app.use("/user", user);
+app.use('/relay',relay);
 
 //Error Handler
 app.use((err, req, res, next) => {

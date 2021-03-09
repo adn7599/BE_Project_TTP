@@ -21,15 +21,9 @@ function generateKeyPair() {
     let publicKey = keys.getPublic("hex");
     let privateKey = keys.getPrivate("hex");
 
-    console.log("Keys before encryption");
-    console.log("Pub: ", publicKey);
-    console.log("Pri: ", privateKey);
 
     encryptWithAes(privateKey)
       .then((encPrivateKey) => {
-        console.log("Keys after encryption");
-        console.log("Pub: ", publicKey);
-        console.log("encPri: ", encPrivateKey);
         resolve({
           publicKey,
           encPrivateKey,
@@ -92,7 +86,6 @@ const decryptWithAes = (text) => {
     decipher.write(text, "hex", (err) => {
       if (!err) {
         let pt = decipher.read().toString("hex");
-        console.log("Dec privateKey", pt);
         //decipher.end()
         resolve(pt);
       } else {

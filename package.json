@@ -11,6 +11,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "elliptic": "^6.5.4",
     "express": "^4.17.1",
     "ibejs": "^1.1.0",
     "json-field-validator": "^0.0.2",
