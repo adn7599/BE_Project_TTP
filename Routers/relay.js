@@ -2,7 +2,10 @@ const express = require("express");
 const conn = require("../Database");
 const router = express.Router();
 
-router.get("/userCredentials/:role/:reg_id", (req, res,next) => {
+const verifyRelay = require('../Authentication/relayAuth')
+const config = require('../configuration.json')
+
+router.get("/userCredentials/:role/:reg_id",verifyRelay, (req, res,next) => {
   if (req.params.role && req.params.reg_id) {
     let role = req.params.role;
     let reg_id = req.params.reg_id;

@@ -13,6 +13,7 @@ function verifyRelay(req, res, next) {
       res.json({ error: 'Accepting "Bearer" Token' });
     } else {
       if (token === relayToken) {
+        req.relay = {}
         req.relay.isVerified = true;
         next();
       } else {
@@ -25,3 +26,5 @@ function verifyRelay(req, res, next) {
     res.json({ error: "Accepting Bearer Token" });
   }
 }
+
+module.exports = verifyRelay;
