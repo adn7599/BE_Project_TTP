@@ -62,6 +62,7 @@ router.post("/login", (req, res, next) => {
                 res.json({
                   status: "User Logged In!",
                   token: token,
+                  relay_password: usr.Relay_Password,
                 });
               })
               .catch((err) => {
@@ -175,9 +176,9 @@ router.post("/verifySign", auth.verifyUser, (req, res, next) => {
         } else {
           let publicKey = result[0].Public_Key;
 
-          let isVerified = myCrypto.verifyMessage(hash,sign,publicKey);
+          let isVerified = myCrypto.verifyMessage(hash, sign, publicKey);
 
-          res.json({isVerified});
+          res.json({ isVerified });
         }
       }
     });

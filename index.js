@@ -8,7 +8,7 @@ const db = require("./Database");
 const user = require("./Routers/User");
 const relay = require('./Routers/relay');
 
-app = express()
+const app = express()
 
 //Middlewares
 app.use(express.json());
