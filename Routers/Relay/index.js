@@ -1,7 +1,6 @@
 const express = require("express");
-const router = express.Router();
 
-const config = require("../../configuration.json");
+const router = express.Router();
 
 router.use("/userCredentials", require("./userCredentials"));
 router.use("/verifySign", require("./verifySign"));

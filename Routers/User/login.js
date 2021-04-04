@@ -1,77 +1,71 @@
 const express = require("express");
+const crypto = require("crypto");
 
+const userModels = require("../../Models/Users");
 const auth = require("../../Authentication/auth");
 
 const router = express.Router();
 
-router.post("/", (req, res, next) => {
-  if (req.body.role && req.body.reg_id && req.body.password) {
-    let role = req.body.role;
-    let reg_id = req.body.reg_id;
-    let password = req.body.password;
+router.post("/", async (req, res, next) => {
+  try {
+    if (req.body.role && req.body.reg_id && req.body.password) {
+      const role = req.body.role;
+      const reg_id = req.body.reg_id;
+      const password = req.body.password;
 
-    let tableName;
-    let colName = "Reg_no";
+      let modelName;
 
-    switch (role) {
-      case "customer":
-        tableName = "Customer";
-        colName = "Ration_no";
-        break;
-      case "SP":
-        tableName = "Supplier";
-        break;
-      case "DA":
-        tableName = "Distributor";
-        break;
-      default:
-        res
-          .status(400)
-          .json({ error: "Invalid Role Sent (valid roles: customer, SP, DA)" });
-        break;
-    }
-
-    let query = "SELECT * FROM ?? WHERE ?? = ?";
-    let fquery = conn.format(query, [tableName, colName, reg_id]);
-
-    conn.query(fquery, (err, result, fields) => {
-      if (err) {
-        next(err);
-      } else {
-        if (result.length == 0) {
-          res.status(400);
-          res.json({ error: "Invalid User!" });
-        } else {
-          let usr = result[0];
-
-          let hashedPass = crypto
-            .createHash("SHA256")
-            .update(password)
-            .digest("hex");
-
-          if (usr.Password === hashedPass) {
-            auth
-              .getToken(role, reg_id, res, next)
-              .then((token) => {
-                res.json({
-                  status: "User Logged In!",
-                  token: token,
-                  relay_password: usr.Relay_Password,
-                });
-              })
-              .catch((err) => {
-                next(err);
-              });
-          } else {
-            res.status(400).json({ error: "Invalid Password" });
-          }
-        }
+      switch (role) {
+        case "customer":
+          modelName = "Customer";
+          break;
+        case "SP":
+          modelName = "Supplier";
+          break;
+        case "DA":
+          modelName = "Distributor";
+          break;
+        default:
+          res.status(400).json({
+            error: "Invalid Role Sent (valid roles: customer, SP, DA)",
+          });
+          return;
       }
-    });
-  } else {
-    res.status(400).json({
-      error: "Invalid parameters sent! (role, reg_id, password required)",
-    });
+
+      const userDoc = await userModels[modelName].findById(reg_id);
+      if (userDoc) {
+        //user present in the Collection
+        //hashing password before comparison
+        let hashedPass = crypto
+          .createHash("SHA256")
+          .update(password)
+          .digest("hex");
+
+        if (userDoc.password === hashedPass) {
+          //password matched
+          const token = await auth.getToken(role, reg_id, res, next);
+
+          res.json({
+            status: "User Logged In!",
+            token: token,
+            relay_password: userDoc.relayPassword,
+          });
+        } else {
+          //wrong password
+          res.status(400).json({ error: "Invalid Password" });
+        }
+      } else {
+        //user not found
+        res.status(400);
+        res.json({ error: "Invalid User!" });
+      }
+    } else {
+      res.status(400).json({
+        error: "Fields role, reg_id, password required",
+      });
+    }
+  } catch (err) {
+    next(err);
   }
 });
 

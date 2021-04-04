@@ -2,66 +2,63 @@ const express = require("express");
 
 const verifyRelay = require("../../Authentication/relayAuth");
 
+const userModels = require("../../Models/Users");
+const myCrypto = require("../../Cryptography");
+
 const router = express.Router();
 
-router.post("/", verifyRelay, (req, res, next) => {
+router.post("/", verifyRelay, async (req, res, next) => {
   try {
     if (req.body.role && req.body.reg_id && req.body.hash && req.body.sign) {
-      let role = req.body.role;
-      let reg_id = req.body.reg_id;
-      let hash = req.body.hash;
-      let sign = req.body.sign;
+      const role = req.body.role;
+      const reg_id = req.body.reg_id;
+      const hash = req.body.hash;
+      const sign = req.body.sign;
 
-      let tableName;
-      let colName = "Reg_no";
+      let modelName;
 
       switch (role) {
         case "customer":
-          tableName = "Customer";
-          colName = "Ration_no";
+          modelName = "Customer";
           break;
         case "SP":
-          tableName = "Supplier";
+          modelName = "Supplier";
           break;
         case "DA":
-          tableName = "Distributor";
+          modelName = "Distributor";
           break;
         default:
           res.status(400).json({
-            error: "Invalid Role, must be either customer or SP or DA",
+            error: "Invalid Role Sent (valid roles: customer, SP, DA)",
           });
-          break;
+          return;
       }
+      //fetching the userDoc
+      const userDoc = await userModels[modelName].findById(reg_id);
 
-      let query = "SELECT  FROM ?? WHERE ?? = ?";
-      let fquery = conn.format(query, [tableName, colName, reg_id]);
+      if (userDoc) {
+        //User found
+        const publicKey = userDoc.publicKey;
+        const isVerified = myCrypto.verifyMessage(hash, sign, publicKey);
 
-      conn.query(fquery, (err, result, field) => {
-        if (err) {
-          next(err);
-        } else {
-          if (result.length == 0) {
-            res
-              .status(213) //custom status code
-              .json({ error: "User not registered here or invalid" });
-          } else {
-            let relayPassword = result[0].Relay_Password;
-
-            res.json({
-              role,
-              reg_id,
-              relay_password: relayPassword,
-            });
-          }
-        }
-      });
+        res.json({ isVerified });
+      } else {
+        //User not registered or invalid
+        res
+          .status(213) //custom status code
+          .json({ error: "User not registered here or invalid" });
+      }
     } else {
       res
         .status(400)
-        .json({ error: "URL Parameters role and reg_id required" });
+        .json({ error: "Fields role,reg_id,hash and sign required" });
     }
   } catch (err) {
-    next(err);
+    if (err.message === "Signature without r or s") {
+      res.status(213).json({ error: "Invalid signature" });
+    } else {
+      next(err);
+    }
   }
 });
 

@@ -57,7 +57,7 @@ router.post("/", async (req, res, next) => {
 
           if (success) {
             //registration token is valid
-            //checkin password format
+            //checking password format
             if (password.length >= 8 && password.length <= 15) {
               //Fields
               //Regno, reg_datetime, password, pub_key, pri_key,relay_pass
@@ -84,9 +84,11 @@ router.post("/", async (req, res, next) => {
                 relayPassword: relayPassword,
               });
 
-              const respDoc = await newUser.save();
+              await newUser.save();
 
-              res.json(respDoc);
+              res.json({
+                msg: "User registered Successfully",
+              });
             } else {
               //Invalid password format
               res.status(400).json({
