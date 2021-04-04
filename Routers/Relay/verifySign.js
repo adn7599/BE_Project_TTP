@@ -1,15 +1,16 @@
 const express = require("express");
-const conn = require("../Database");
+
+const verifyRelay = require("../../Authentication/relayAuth");
+
 const router = express.Router();
 
-const verifyRelay = require("../Authentication/relayAuth");
-const config = require("../configuration.json");
-
-router.get("/userCredentials/:role/:reg_id", verifyRelay, (req, res, next) => {
+router.post("/", verifyRelay, (req, res, next) => {
   try {
-    if (req.params.role && req.params.reg_id) {
-      let role = req.params.role;
-      let reg_id = req.params.reg_id;
+    if (req.body.role && req.body.reg_id && req.body.hash && req.body.sign) {
+      let role = req.body.role;
+      let reg_id = req.body.reg_id;
+      let hash = req.body.hash;
+      let sign = req.body.sign;
 
       let tableName;
       let colName = "Reg_no";
@@ -32,7 +33,7 @@ router.get("/userCredentials/:role/:reg_id", verifyRelay, (req, res, next) => {
           break;
       }
 
-      let query = "SELECT Relay_Password FROM ?? WHERE ?? = ?";
+      let query = "SELECT  FROM ?? WHERE ?? = ?";
       let fquery = conn.format(query, [tableName, colName, reg_id]);
 
       conn.query(fquery, (err, result, field) => {

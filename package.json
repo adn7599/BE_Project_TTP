@@ -13,10 +13,8 @@
   "dependencies": {
     "elliptic": "^6.5.4",
     "express": "^4.17.1",
-    "ibejs": "^1.1.0",
-    "json-field-validator": "^0.0.2",
     "jsonwebtoken": "^8.5.1",
-    "mysql": "^2.18.1",
+    "mongoose": "^5.12.3",
     "otp-generator": "^2.0.0"
   },
   "devDependencies": {

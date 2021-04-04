@@ -3,19 +3,19 @@ const config = require("./configuration.json");
 //Modules
 const express = require("express");
 
-const db = require("./Database");
+const { db } = require("./Models");
 //Routes
 const user = require("./Routers/User");
-const relay = require('./Routers/relay');
+const relay = require("./Routers/Relay");
 
-const app = express()
+const app = express();
 
 //Middlewares
 app.use(express.json());
 
 //Setting up routes
 app.use("/user", user);
-app.use('/relay',relay);
+app.use("/relay", relay);
 
 //Error Handler
 app.use((err, req, res, next) => {
@@ -26,13 +26,9 @@ app.use((err, req, res, next) => {
 //Listen
 PORT = process.env.PORT || parseInt(config.PORT);
 
-db.connect((err) => {
-  if (err) {
-    console.log("Couldn't Connect to the Database!!");
-    console.log("DB Error: ", err);
-  } else {
-    app.listen(PORT, () => {
-      console.log(`Server started at port ${PORT}`);
-    });
-  }
+db.once("open", () => {
+  console.log("MongoDB Database connected!!");
+  app.listen(PORT, () => {
+    console.log(`Server started at port ${PORT}`);
+  });
 });
