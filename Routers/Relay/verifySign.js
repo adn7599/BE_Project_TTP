@@ -55,7 +55,7 @@ router.post("/", verifyRelay, async (req, res, next) => {
     }
   } catch (err) {
     if (err.message === "Signature without r or s") {
-      res.status(213).json({ error: "Invalid signature" });
+      res.status(213).json({ error: "Invalid signature format" });
     } else {
       next(err);
     }
