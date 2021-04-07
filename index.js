@@ -2,6 +2,7 @@ const config = require("./configuration.json");
 
 //Modules
 const express = require("express");
+const morgan = require("morgan");
 
 const { db } = require("./Models");
 //Routes
@@ -11,6 +12,7 @@ const relay = require("./Routers/Relay");
 const app = express();
 
 //Middlewares
+app.use(morgan("tiny"));
 app.use(express.json());
 
 //Setting up routes
