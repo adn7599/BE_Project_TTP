@@ -36,7 +36,7 @@ router.post("/", async (req, res, next) => {
       if (userDoc) {
         //user present in the Collection
         //hashing password before comparison
-        let hashedPass = crypto
+        const hashedPass = crypto
           .createHash("SHA256")
           .update(password)
           .digest("hex");
