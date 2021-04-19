@@ -31,6 +31,13 @@ router.post("/", async (req, res, next) => {
           return;
       }
 
+      //checking if the user has already registered
+      const userDoc = await userModels[modelName.substring(2)].findById(reg_id);
+      let isRegistered = false;
+      if (userDoc) {
+        isRegistered = true;
+      }
+
       const gpUserDoc = await userModels[modelName].findById(reg_id);
       if (gpUserDoc) {
         let phoneNum = gpUserDoc.mobNo;
@@ -39,6 +46,7 @@ router.post("/", async (req, res, next) => {
         res.send({
           status: "User Valid!",
           Mob_no: phoneNum,
+          isRegistered,
         });
       } else {
         res.status(400);

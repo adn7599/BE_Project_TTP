@@ -35,6 +35,13 @@ router.post("/", async (req, res, next) => {
           return;
       }
 
+      //checking if the user has already registered
+      const userDoc = await userModels[modelName.substring(2)].findById(reg_id);
+      if (userDoc) {
+        res.status(400).json({ error: "User already registered" });
+        return;
+      }
+
       const gpUserDoc = await userModels[modelName].findById(reg_id);
 
       if (gpUserDoc) {
