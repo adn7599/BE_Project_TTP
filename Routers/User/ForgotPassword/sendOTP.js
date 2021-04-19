@@ -34,14 +34,14 @@ router.post("/", async (req, res, next) => {
       }
 
       const gpUserDoc = await userModels[modelName].findById(reg_id);
-      
+
       //checking if the user has registered
       const userDoc = await userModels[modelName.substring(2)].findById(reg_id);
       if (userDoc == null) {
         res.status(400).json({ error: "User invalid or not registered" });
         return;
       }
-      
+
       if (gpUserDoc) {
         let phoneNum = gpUserDoc.mobNo;
         let token = forgotPassOtp.createNewOTP(phoneNum);
@@ -55,7 +55,7 @@ router.post("/", async (req, res, next) => {
         .status(400)
         .json({ error: "Invalid parameters sent! (role, reg_id required)" });
     }
-  } catch {
+  } catch (err) {
     next(err);
   }
 });

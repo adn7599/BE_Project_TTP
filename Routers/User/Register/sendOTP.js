@@ -54,7 +54,7 @@ router.post("/", async (req, res, next) => {
         .status(400)
         .json({ error: "Invalid parameters sent! (role, reg_id required)" });
     }
-  } catch {
+  } catch (err) {
     next(err);
   }
 });
