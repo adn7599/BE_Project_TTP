@@ -56,8 +56,15 @@ router.post("/", async (req, res, next) => {
         }
       } else {
         //user not found
-        res.status(400);
-        res.json({ error: "Invalid User!" });
+        //checking if user is valid
+        const gpUserDoc = await userModels["Gp" + modelName].findById(reg_id);
+        if (gpUserDoc) {
+          //valid but not registered
+          res.status(400).json({ error: "User not registered" });
+        } else {
+          //invalid user
+          res.status(400).json({ error: "Invalid User" });
+        }
       }
     } else {
       res.status(400).json({
