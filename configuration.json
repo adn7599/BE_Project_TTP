@@ -1,12 +1,9 @@
 {
     "RELAY_TOKEN": "ucQb0lgz5RI9wfixBSBckUcO7pFRW2D2",
     "PORT": "5000",
-
-    "MONGO_URI": "mongodb://localhost/TTP",
-
+    "MONGO_URI": "mongodb+srv://myClient:myClient123@ttprelay.e8umm.mongodb.net/TTP?retryWrites=true&w=majority",
     "JWT_KEY": "ssshhhh",
     "JWT_ALGO": "HS256",
     "JWT_EXP": "1h",
-
     "OTP_KEY": "areallylongsecretkeythatreallyisntthatsecret"
 }
