@@ -11,5 +11,6 @@ router.use("/login", require("./login"));
 router.use("/details", require("./details"));
 router.use("/sign", require("./sign"));
 router.use("/verifySign", require("./verifySign"));
+router.use("/complaint", require("./Complaints"));
 
 module.exports = router;
