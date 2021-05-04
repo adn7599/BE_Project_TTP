@@ -92,13 +92,13 @@ router.get("/", async (req, res, next) => {
     if (req.user.role === "customer") {
       const myComplaints = await CustSuppComplaintModel.find({
         complainer: req.user.reg_id,
-      });
+      }).sort({ time: -1 });
 
       res.json(myComplaints);
     } else if (req.user.role === "SP") {
       const myComplaints = await SuppDistComplaintModel.find({
         complainer: req.user.reg_id,
-      });
+      }).sort({ time: -1 });
 
       res.json(myComplaints);
     } else {
