@@ -100,6 +100,13 @@ router.get("/", async (req, res, next) => {
         complainer: req.user.reg_id,
       }).sort({ time: -1 });
 
+      //Populating complainee
+      for (let complaint of myComplaints) {
+        await complaint
+          .populate("complainee", "name address mobNo email")
+          .execPopulate();
+      }
+
       res.json(myComplaints);
     } else {
       res.status(400).json({ error: "Invalid role" });
